@@ -1,0 +1,21 @@
+﻿@page "/"
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+<button @onclick="start">
+    start
+    </button>
+
+@code {
+
+    private  void start() 
+    {
+        #if ANDROID
+        if (!TestNotification.Platforms.Android.AndroidServiceManager.IsRunning)
+        {
+            TestNotification.Platforms.Android.AndroidServiceManager.StartMyService();
+        }
+#endif
+    }
+}
