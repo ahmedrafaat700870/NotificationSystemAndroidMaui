@@ -2,6 +2,8 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.EventArgs;
 using TestNotification.Platforms.Android;
 
 namespace TestNotification;
@@ -17,8 +19,6 @@ public class MainActivity : MauiAppCompatActivity
     protected override bool AllowFragmentRestore => true;
     public MainActivity()
     {
-
-        
         AndroidServiceManager.MainActivity = this;
     }
 
@@ -99,8 +99,8 @@ public class MainActivity : MauiAppCompatActivity
             {
                 StartService();
             }
-           
 
+            LocalNotificationCenter.Current.NotificationActionTapped += OnNotificationActionTapped;
             base.OnCreate(savedInstanceState);
         }
         catch (Exception e)
@@ -108,7 +108,29 @@ public class MainActivity : MauiAppCompatActivity
 
         }
     }
-  protected override void OnNewIntent(Intent intent)
+
+    private void OnNotificationActionTapped(NotificationActionEventArgs e)
+    {
+        // Handle the notification action, e.g., navigate to a specific page
+        if (e.IsTapped)
+        {
+            // Navigate to chat or any specific page
+            NavigateToChatPage();
+        }
+        else if(e.IsDismissed)
+        {
+           // hendel dismissed
+        }
+    }
+    private void NavigateToChatPage()
+    {
+        Device.BeginInvokeOnMainThread(async () =>
+        {
+            // naivgate to chat page .
+            //await ;
+        });
+    }
+    protected override void OnNewIntent(Intent intent)
   {
         base.OnNewIntent(intent);
         // Handle the intent that you received

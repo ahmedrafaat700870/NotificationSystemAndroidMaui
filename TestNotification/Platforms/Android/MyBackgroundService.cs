@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
+using Plugin.LocalNotification;
 namespace TestNotification.Platforms.Android;
 
 [Service]
@@ -39,7 +40,7 @@ internal class MyBackgroundService : Service
         var notification = new NotificationCompat.Builder(this,
                 MainApplication.ChannelId)
             .SetContentText(input)
-            .SetSmallIcon(Resource.Drawable.abc_btn_check_material)
+            .SetSmallIcon(Resource.Drawable.AppIcon)
             .SetContentIntent(pendingIntent);
 
         StartForeground(myId, notification.Build());
@@ -58,21 +59,33 @@ internal class MyBackgroundService : Service
     void Timer_Elapsed(object state)
     {
         AndroidServiceManager.IsRunning = true;
-
         BadgeNumber++;
         string timeString = $"Time: {DateTime.Now.ToLongTimeString()}";
-        var notification = (NotificationCompat.Builder)state;
-        notification.SetNumber(BadgeNumber);
-        notification.SetContentTitle(timeString);
-        notification.SetContentText(timeString);
 
+        var notification = new NotificationRequest
+        {
+            NotificationId = BadgeNumber,
+            Title = "Background Task",
+            Description = $"Task executed at {DateTime.Now:T}",
+            BadgeNumber = BadgeNumber,
+            Schedule = new NotificationRequestSchedule
+            {
+                NotifyTime = DateTime.Now.AddSeconds(1)
+            }
+        };
 
-        StartForeground(myId, notification.Build());
+        LocalNotificationCenter.Current.Show(notification);
     }
 
     public override void OnTaskRemoved(Intent? rootIntent)
     {
         //StopSelf();
         base.OnTaskRemoved(rootIntent);
+    }
+
+    public override void OnDestroy()
+    {
+        timer?.Dispose();
+        base.OnDestroy();
     }
 }
