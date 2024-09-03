@@ -9,7 +9,7 @@ public static class AndroidServiceManager
     public static void StartMyService()
     {
         if (MainActivity == null) return;
-        MainActivity.StartService();
+        MainActivity._StartService();
     }
 
     public static void StopMyService()

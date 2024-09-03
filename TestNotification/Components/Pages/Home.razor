@@ -5,17 +5,28 @@
 Welcome to your new app.
 <button @onclick="start">
     start
-    </button>
+</button>
+
+<button @onclick="Colling">
+    colling
+</button>
 
 @code {
 
-    private  void start() 
+    private void start()
     {
-        #if ANDROID
-        if (!TestNotification.Platforms.Android.AndroidServiceManager.IsRunning)
-        {
-            TestNotification.Platforms.Android.AndroidServiceManager.StartMyService();
-        }
+#if ANDROID
+    if (!TestNotification.Platforms.Android.AndroidServiceManager.IsRunning)
+    {
+    TestNotification.Platforms.Android.AndroidServiceManager.StartMyService();
+    }
+#endif
+
+    }
+    private void Colling()
+    {
+#if ANDROID
+ TestNotification.Platforms.Android.AndroidServiceManager.MainActivity.ShowIncomingCallNotification("Bingo" , "ahmed rafaat");
 #endif
     }
 }

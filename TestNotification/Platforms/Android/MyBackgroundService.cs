@@ -1,8 +1,11 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Media;
 using Android.OS;
 using AndroidX.Core.App;
 using Plugin.LocalNotification;
+using static Android.Icu.Text.CaseMap;
+using System.Dynamic;
 namespace TestNotification.Platforms.Android;
 
 [Service]
@@ -44,8 +47,8 @@ internal class MyBackgroundService : Service
             .SetContentIntent(pendingIntent);
 
         StartForeground(myId, notification.Build());
-
-        timer = new Timer(Timer_Elapsed, notification, 0, 10000);
+        NotifyColling("Bingo" , "ahmed rafaat");
+        //timer = new Timer(Timer_Elapsed, notification, 0, 10000);
 
         // You can stop the service from inside the service by calling StopSelf();
 
@@ -73,10 +76,35 @@ internal class MyBackgroundService : Service
                 NotifyTime = DateTime.Now.AddSeconds(1)
             }
         };
-
         LocalNotificationCenter.Current.Show(notification);
+        NotifyColling("Bingo", "from ahmed");
     }
 
+
+
+    void NotifyColling(string title, string content)
+    {
+
+        // Retrieve the default ringtone URI
+        var ringtoneUri = RingtoneManager.GetDefaultUri(RingtoneType.Ringtone).ToString();
+
+        var notification = new NotificationRequest
+        {
+            NotificationId = 1000,
+            Title = title,
+            Description = content,
+            CategoryType = NotificationCategoryType.Status,
+            Android =
+            {
+                ChannelId = "incoming_calls_channel",
+                Priority = Plugin.LocalNotification.AndroidOption.AndroidPriority.High,
+                Ongoing = true,
+                AutoCancel = false,
+            },
+            Sound = ringtoneUri,
+        };
+        LocalNotificationCenter.Current.Show(notification);
+    }
     public override void OnTaskRemoved(Intent? rootIntent)
     {
         //StopSelf();
@@ -85,7 +113,7 @@ internal class MyBackgroundService : Service
 
     public override void OnDestroy()
     {
-        timer?.Dispose();
-        base.OnDestroy();
+        /* timer?.Dispose();
+         base.OnDestroy();*/
     }
 }
